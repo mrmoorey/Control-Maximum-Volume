@@ -24,7 +24,7 @@ definition(
 )
 
 preferences {
-	page(name: "mainPage", title: "Control your Speaker when volume is too high", install: true, uninstall: true)
+	page(name: "mainPage", title: "Speaker to Control", install: true, uninstall: true)
 	page(name: "timeIntervalInput", title: "Only during a certain time") {
 		section {
 			input "starting", "time", title: "Starting", required: false
@@ -61,20 +61,20 @@ def mainPage() {
 
 def installed() {
 	log.debug "Installed with settings: ${settings}"
+	app.updateLabel(defaultLabel())    
 	subscribeToEvents()
 }
 
 def updated() {
 	log.debug "Updated with settings: ${settings}"
+   	app.updateLabel(defaultLabel())
 	unsubscribe()
-	unschedule()
 	subscribeToEvents()
 }
 
 def subscribeToEvents() {
 	log.trace "subscribeToEvents()"
 	subscribe(player, "level", eventHandler, [filterEvents: false])
-	app.updateLabel(defaultLabel())
 }
 
 def eventHandler(evt) {
@@ -85,11 +85,11 @@ def eventHandler(evt) {
 			if (frequency) {
 				if (lastTime == null || now() - lastTime >= frequency * 60000) {
 					if(currentLevel.toInteger() > maxvolume.toInteger()) {
-						log.debug "Changing volume to $volume"
+						log.debug "Changing to $volume%. $currentLevel% > $maxvolume%"
 						takeAction(evt)
 					}
 					else
-						log.debug "Not changing volume"
+						log.debug "Nothing to do. $currentLevel% < $maxvolume%"
 				}
 				else {
 					log.debug "Not taking action because $frequency minutes have not elapsed since last action"
@@ -97,11 +97,11 @@ def eventHandler(evt) {
 			}
 			else {
 				if(currentLevel.toInteger() > maxvolume.toInteger()) {
-					log.debug "Changing volume to $volume"
+					log.debug "Changing to $volume%. $currentLevel% > $maxvolume%"
 					takeAction(evt)
 				}
 				else
-					log.debug "Not changing volume"
+					log.debug "Nothing to do. $currentLevel% < $maxvolume%"
 			}
 		}
 		else {
@@ -148,7 +148,6 @@ private oncePerDayOk(Long lastTime) {
 	result
 }
 
-// TODO - centralize somehow
 private getAllOk() {
 	modeOk && daysOk && timeOk
 }
@@ -202,9 +201,9 @@ private timeIntervalLabel()
 }
 
 // A method that will set the default label of the automation.
-// It uses the selected speakers and motion detectors
+// It uses the selected speakers and volume parameters
 def defaultLabel() {
 	def playerLabel = player.displayName
 
-	"Set $playerLabel to $volume if greater than $maxVolume"
+	"Set $playerLabel to $volume% if greater than $maxvolume%"
 }
