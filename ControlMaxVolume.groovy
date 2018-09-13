@@ -18,8 +18,8 @@ definition(
     namespace: "mrmoorey",
     author: "Alan Moore",
     description: "Control the maximum volume of a speaker (Sonos, Bose, etc). This is the parent SmartApp allowing multiple automations",
-    category: "Music & Sounds",
-    iconUrl: "hhttp://cdn.device-icons.smartthings.com/Electronics/electronics16-icn.png",
+    category: "My Apps",
+    iconUrl: "http://cdn.device-icons.smartthings.com/Electronics/electronics16-icn.png",
     iconX2Url: "http://cdn.device-icons.smartthings.com/Electronics/electronics16-icn@2x.png",
     iconX3Url: "http://cdn.device-icons.smartthings.com/Electronics/electronics16-icn@3x.png",
     singleInstance: true)
